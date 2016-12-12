@@ -1,0 +1,52 @@
+buildscript {
+  ext.kotlin_version = '1.0.5-2'
+
+  repositories {
+    mavenCentral()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+    maven {
+      url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+    }
+  }
+  
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+plugins {
+  id "org.jetbrains.intellij" version "0.1.10"
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+intellij {
+  pluginName 'nablarch-support'
+  version = "IU-2016.3"
+  updateSinceUntilBuild = false
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+  mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+dependencies {
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  testCompile 'org.assertj:assertj-core:3.6.1'
+  
+  // nablarch-library
+  testCompile 'com.nablarch.framework:nablarch-fw-web:+'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '3.1'
+}
