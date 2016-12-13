@@ -1,0 +1,29 @@
+<idea-plugin version="2">
+  <id>com.nablarch.tool.plugin</id>
+  <name>nablarch support plugin</name>
+  <version>0.0.1</version>
+  <vendor email="nablarch@tis.co.jp">tis</vendor>
+
+  <description><![CDATA[
+    ]]></description>
+
+  <change-notes><![CDATA[
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="163.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <inspectionToolProvider implementation="nablarch.intellij.plugin.inspector.PublishApiCheckInspectionToolProvider" order="first"/>
+  </extensions>
+
+  <actions>
+  </actions>
+
+</idea-plugin>
