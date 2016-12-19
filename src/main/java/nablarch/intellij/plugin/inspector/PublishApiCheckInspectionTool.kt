@@ -1,18 +1,44 @@
 package nablarch.intellij.plugin.inspector
 
+import com.intellij.codeHighlighting.*
 import com.intellij.codeInspection.*
+import com.intellij.codeInspection.ui.*
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.*
 import com.intellij.psi.util.*
+import com.siyeh.ig.ui.*
+import org.jdom.*
+import javax.swing.*
 
-class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
+open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
+
+  val tags: MutableList<String> = mutableListOf()
+
+  var tagsString: String = ""
 
   override fun getGroupDisplayName(): String = "nablarch"
 
   override fun getDisplayName(): String = "use unpublished api."
 
-  override fun getShortName(): String {
-    return "unpublishedApi"
+  override fun getShortName(): String = "unpublishedApi"
+
+  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
+
+  override fun createOptionsPanel(): JComponent? {
+    val listTable = ListTable(ListWrappingTableModel(listOf(tags), "呼び出しを許可するタグのリスト"))
+    return UiUtils.createAddRemovePanel(listTable)
+  }
+
+  override fun writeSettings(node: Element) {
+    tagsString = tags.joinToString(",")
+    super.writeSettings(node)
+  }
+
+  override fun readSettings(node: Element) {
+    super.readSettings(node)
+    val split = tagsString.split(",")
+    tags.clear()
+    tags.addAll(split.filter(String::isNotBlank))
   }
 
   override fun isEnabledByDefault(): Boolean = true
@@ -25,7 +51,7 @@ class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         super.visitMethodCallExpression(expression)
-        MethodCallInspector(expression, holder).inspect()
+        MethodCallInspector(expression, holder, tags).inspect()
       }
 
       /**
@@ -33,7 +59,7 @@ class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitNewExpression(expression: PsiNewExpression?) {
         super.visitNewExpression(expression)
-        MethodCallInspector(expression, holder).inspect()
+        MethodCallInspector(expression, holder, tags).inspect()
       }
 
       /**
@@ -47,7 +73,7 @@ class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
         val checker: (PsiClassReferenceType) -> Unit = { type ->
           PsiTypesUtil.getPsiClass(type)?.let {
-            VariableDefinitionInspector(type.reference, it, holder).inspect()
+            VariableDefinitionInspector(type.reference, it, holder, tags).inspect()
           }
         }
 
