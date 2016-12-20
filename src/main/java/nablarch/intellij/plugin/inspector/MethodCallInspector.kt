@@ -6,7 +6,8 @@ import com.intellij.psi.util.*
 
 class MethodCallInspector(
     private val expression: PsiCallExpression?,
-    private val holder: ProblemsHolder
+    private val holder: ProblemsHolder,
+    private val tags: List<String>
 ) {
 
   fun inspect() {
@@ -23,15 +24,15 @@ class MethodCallInspector(
         PsiTreeUtil.findChildrenOfAnyType(expression, PsiIdentifier::class.java).firstOrNull {
           it.text == method.name
         }?.let {
-          addProblem(holder, it)
+          addProblem(holder, it, tags)
         }
       }
     } else {
       if (expression is PsiNewExpression) {
         PsiTypesUtil.getPsiClass(expression.type)?.let { psiClass ->
-          if (isNablarchClass(psiClass) && !isPublishedApi(psiClass)) {
+          if (isNablarchClass(psiClass) && !isPublishedApi(psiClass, tags)) {
             PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
-              addProblem(holder, it)
+              addProblem(holder, it, tags)
             }
           }
         }
@@ -40,18 +41,20 @@ class MethodCallInspector(
   }
 
   private fun isPublishedMethod(method: PsiMethod): Boolean {
-    val result = isPublishedApi(method)
+    val result = isPublishedApi(method, tags)
     return if (result) {
       true
     } else {
       method.findSuperMethods().firstOrNull {
-        isPublishedApi(it) || (it.containingClass?.let(::isPublishedApi) ?: false)
+        isPublishedApi(it, tags) || (it.containingClass?.let {
+          isPublishedApi(it, tags)
+        } ?: false)
       } != null
     }
   }
 
   private fun isPublishedClass(method: PsiMethod): Boolean {
     val psiClass = method.containingClass ?: return true
-    return isPublishedApi(psiClass)
+    return isPublishedApi(psiClass, tags)
   }
 }

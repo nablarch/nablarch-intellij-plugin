@@ -23,7 +23,9 @@ open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase()
 
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(PublishApiCheckInspectionTool())
+    val publishApiCheckInspectionTool = PublishApiCheckInspectionTool()
+    publishApiCheckInspectionTool.tags.add("architect")
+    myFixture.enableInspections(publishApiCheckInspectionTool)
     PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(HttpRequest::class.java))
     PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(ExecutionContext::class.java))
     PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(BigDecimal::class.java))
@@ -94,7 +96,6 @@ open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase()
       package nablarch.test;
       import nablarch.core.util.annotation.Published;
       public class HogeException extends RuntimeException {
-
           @Published
           public HogeException() {
           }
@@ -107,12 +108,58 @@ open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase()
     myFixture.addClass("""
       package nablarch.test;
       import nablarch.core.util.annotation.Published;
-      @Published
+      @Published(tag = null)
       public class Hoge {
       }
     """)
     
     myFixture.testHighlighting("公開クラスのデフォルトコンストラクタ.java")
+  }
+  
+  fun `test_許可タグしていありでアノテーションのタグに列挙されていない場合はNGとなること`() {
+    myFixture.addClass("""
+      package nablarch.test;
+      import nablarch.core.util.annotation.Published;
+      public class Hoge {
+          @Published(tag = {"OK", "", null})
+          public Hoge() {
+          }
+      }
+    """)
+    myFixture.testHighlighting("カテゴリNG.java")
+  }
+  
+  fun `test_許可タグを指定していなくてアノテーションにタグありの場合はNGとなること`() {
+    val publishApiCheckInspectionTool = PublishApiCheckInspectionTool()
+    publishApiCheckInspectionTool.tags.clear()
+    myFixture.enableInspections(publishApiCheckInspectionTool)
+    myFixture.addClass("""
+      package nablarch.test;
+      import nablarch.core.util.annotation.Published;
+      public class Hoge {
+          @Published(tag = {"OK", "", null})
+          public Hoge() {
+          }
+      }
+    """)
+    myFixture.testHighlighting("カテゴリNG_2.java")
+  }
+  
+  fun `test_許可タグを指定していてそのタグが１つでも指定されていればOKとなること`() {
+    val publishApiCheckInspectionTool = PublishApiCheckInspectionTool()
+    publishApiCheckInspectionTool.tags.clear()
+    publishApiCheckInspectionTool.tags += listOf<String>("tag1", "tag2")
     
+    myFixture.enableInspections(publishApiCheckInspectionTool)
+    myFixture.addClass("""
+      package nablarch.test;
+      import nablarch.core.util.annotation.Published;
+      public class Hoge {
+          @Published(tag = {"tag2", "tag3", "tag4", null})
+          public Hoge() {
+          }
+      }
+    """)
+    myFixture.testHighlighting("カテゴリOK.java")
   }
 }

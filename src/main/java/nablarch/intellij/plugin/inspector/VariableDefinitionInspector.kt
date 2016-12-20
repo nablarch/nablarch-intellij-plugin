@@ -6,19 +6,20 @@ import com.intellij.psi.*
 class VariableDefinitionInspector(
     private val targetElement: PsiElement,
     private val psiClass: PsiClass,
-    private val holder: ProblemsHolder
+    private val holder: ProblemsHolder,
+    private val tags: List<String>
 ) {
   
   fun inspect() {
-    if (!isNablarchClass(psiClass) || isPublishedApi(psiClass)) {
+    if (!isNablarchClass(psiClass) || isPublishedApi(psiClass, tags)) {
       return
     }
     
     psiClass.allMethods.forEach {
-      if (isPublishedApi(it)) {
+      if (isPublishedApi(it, tags)) {
         return
       }
     }
-    addProblem(holder,targetElement)
+    addProblem(holder, targetElement, tags)
   }
 }
