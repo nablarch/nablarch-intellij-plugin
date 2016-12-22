@@ -4,6 +4,8 @@ import com.intellij.codeInspection.*
 
 /**
  * Nablarchフレームワークの非公開APIを使用していないことをチェックする。
+ * 
+ * @author siosio
  */
 class PublishApiCheckInspectionToolProvider : InspectionToolProvider {
 

@@ -3,6 +3,11 @@ package nablarch.intellij.plugin.inspector
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
 
+/**
+ * 変数定義部に関してNablarchの非公開APIを使用している箇所を検出するクラス。
+ * 
+ * @author siosio
+ */
 class VariableDefinitionInspector(
     private val targetElement: PsiElement,
     private val psiClass: PsiClass,

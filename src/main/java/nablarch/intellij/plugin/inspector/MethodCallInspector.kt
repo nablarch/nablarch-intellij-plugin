@@ -4,6 +4,11 @@ import com.intellij.codeInspection.*
 import com.intellij.psi.*
 import com.intellij.psi.util.*
 
+/**
+ * メソッド呼び出しとコンストラクタ呼び出しに関してNablarchの非公開API使用箇所を検出するクラス。
+ * 
+ * @author siosio
+ */
 class MethodCallInspector(
     private val expression: PsiCallExpression?,
     private val holder: ProblemsHolder,

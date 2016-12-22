@@ -10,6 +10,11 @@ import com.siyeh.ig.ui.*
 import org.jdom.*
 import javax.swing.*
 
+/**
+ * Nablarchの非公開APIの使用箇所を検出するインスペクタ実装。
+ * 
+ * @author siosio
+ */
 open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   val tags: MutableList<String> = mutableListOf()
