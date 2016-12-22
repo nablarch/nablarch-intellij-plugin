@@ -7,13 +7,12 @@ import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
 import com.intellij.psi.*
 import org.jdom.*
-import java.awt.*
 import javax.swing.*
 
 
 open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
-  val textField = JTextField(20)
+  val textField = JTextField(10)
 
   val errorLabel = JLabel()
 
@@ -31,23 +30,21 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
     val parent = JPanel(VerticalFlowLayout())
 
-    val inputPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-    val button = JButton("ファイルを選択")
+    val inputPanel = JPanel()
+    inputPanel.layout = BoxLayout(inputPanel, BoxLayout.X_AXIS)
+    val button = TextFieldWithBrowseButton(textField)
     button.addActionListener {
       val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("config")
       val file = FileChooser.chooseFile(descriptor, ProjectUtil.guessCurrentProject(null), null)
       if (file != null) {
-        textField.text = file.path
+        button.text = file.path
       }
     }
-    inputPanel.add(JLabel("使用不許可API定義ファイル"))
-    inputPanel.add(textField)
     inputPanel.add(button)
-    parent.add(inputPanel)
 
-    val errorPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-    errorPanel.add(errorLabel)
-    parent.add(errorPanel)
+    parent.add(JLabel("使用不許可API定義ファイル:"))
+    parent.add(inputPanel)
+    parent.add(errorLabel)
 
     return parent
   }
@@ -58,7 +55,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
       errorLabel.text = ""
       blacklistFile = textField.text
     } catch (e: Exception) {
-      errorLabel.text = "指定されたファイルの読み込みに失敗しました。"
+      errorLabel.text = "ファイルの読み込みに失敗しました。"
     }
 
     super.writeSettings(node)
