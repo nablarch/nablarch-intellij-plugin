@@ -50,7 +50,7 @@ fun addProblem(holder: ProblemsHolder, element: PsiElement, tags: List<String>) 
 }
 
 fun addUnpermittedProblem(holder: ProblemsHolder, element: PsiElement) {
-  holder.registerProblem(element, "使用不許可APIです。", ProblemHighlightType.ERROR)
+  holder.registerProblem(element, "使用不許可APIです。")
 }
 
 fun isJavaOpenApi(psiClass: PsiClass?): Boolean {
