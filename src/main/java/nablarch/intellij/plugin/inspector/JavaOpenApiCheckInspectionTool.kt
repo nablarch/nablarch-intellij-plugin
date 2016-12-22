@@ -2,6 +2,8 @@ package nablarch.intellij.plugin.inspector
 
 import com.intellij.codeHighlighting.*
 import com.intellij.codeInspection.*
+import com.intellij.openapi.fileChooser.*
+import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
 import com.intellij.psi.*
 import org.jdom.*
@@ -32,10 +34,10 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
     val inputPanel = JPanel(FlowLayout(FlowLayout.LEFT))
     val button = JButton("ファイルを選択")
     button.addActionListener {
-      val chooser = JFileChooser()
-      val selected = chooser.showOpenDialog(parent)
-      if (selected == JFileChooser.APPROVE_OPTION) {
-        textField.text = chooser.selectedFile.absolutePath
+      val descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor("config")
+      val file = FileChooser.chooseFile(descriptor, ProjectUtil.guessCurrentProject(null), null)
+      if (file != null) {
+        textField.text = file.path
       }
     }
     inputPanel.add(JLabel("使用不許可API定義ファイル"))
