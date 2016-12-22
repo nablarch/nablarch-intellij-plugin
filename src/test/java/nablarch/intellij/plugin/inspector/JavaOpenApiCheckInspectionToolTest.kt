@@ -66,7 +66,7 @@ open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase(
 
     sut.writeSettings(Element("test"))
 
-    TestCase.assertEquals("指定されたファイルの読み込みに失敗しました。", sut.errorLabel.text)
+    TestCase.assertEquals("ファイルの読み込みに失敗しました。", sut.errorLabel.text)
   }
 
   // -------------------------------------------------------------------------------- OKパターン
@@ -101,7 +101,7 @@ open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase(
   fun `test_独自定義のブラックリストファイルを正常に読み込めること`() {
     val sut = JavaOpenApiCheckInspectionTool()
     sut.textField.text = testDataPath + "/blacklist.config"
-    sut.errorLabel.text = "指定されたファイルの読み込みに失敗しました。"
+    sut.errorLabel.text = "ファイルの読み込みに失敗しました。"
 
     sut.writeSettings(Element("test"))
 
