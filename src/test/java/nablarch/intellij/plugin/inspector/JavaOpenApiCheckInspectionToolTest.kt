@@ -1,12 +1,14 @@
 package nablarch.intellij.plugin.inspector
 
+import com.intellij.codeInspection.*
+import com.intellij.diagnostic.*
+import com.intellij.mock.*
 import com.intellij.openapi.roots.*
 import com.intellij.pom.java.*
+import com.intellij.psi.*
 import com.intellij.testFramework.*
 import com.intellij.testFramework.fixtures.*
 import com.intellij.util.*
-import junit.framework.*
-import org.jdom.*
 import java.applet.*
 import java.net.*
 
@@ -26,8 +28,7 @@ open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase(
     PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(HttpCookie::class.java))
     LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
 
-    sut.textField.text = ""
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = ""
     myFixture.enableInspections(sut)
   }
 
@@ -50,27 +51,32 @@ open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase(
   }
 
   fun `test_独自定義のブラックリストに定義されたクラスのコンストラクタを呼び出している場合はNGとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストに定義されたクラスのコンストラクタ.java")
   }
 
   fun `test_独自定義のブラックリストに定義されたクラスのメソッドを呼び出している場合はNGとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストに定義されたクラスのメソッド.java")
   }
 
   fun `test_独自定義のブラックリストに定義された例外クラスを捕捉している場合はNGとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストに定義された例外クラスの捕捉.java")
   }
 
   fun `test_独自定義のブラックリストファイルが存在しない場合にエラーとなること`() {
-    sut.textField.text = "notFound.config"
-    sut.writeSettings(Element("test"))
-    TestCase.assertEquals("ファイルの読み込みに失敗しました。", sut.errorLabel.text)
+    sut.blacklistFile = "notFound.config"
+
+    try {
+      sut.buildVisitor(ProblemsHolder(InspectionManager.getInstance(project), MockPsiFile(PsiManager.getInstance(project)), true), true)
+      fail("ファイルが見つからないため、例外が発生する")
+    } catch (e: Exception) {
+      assertTrue(e is PluginException)
+      assertTrue(e.message!!.startsWith("指定されたブラックリスト定義ファイルが見つかりません。"))
+      assertTrue(e.message!!.contains("notFound.config"))
+      assertTrue(e.message!!.contains("com.nablarch.tool.plugin"))
+    }
   }
 
   // -------------------------------------------------------------------------------- OKパターン
@@ -88,30 +94,17 @@ open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase(
   }
 
   fun `test_独自定義のブラックリストで未定義のクラスのコンストラクタを呼び出している場合はOKとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストで未定義のクラスのコンストラクタ.java")
   }
 
   fun `test_独自定義のブラックリストで未定義のクラスのメソッドを呼び出している場合はOKとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストで未定義のクラスのメソッド.java")
   }
 
   fun `test_独自定義のブラックリストで未定義の例外クラスを捕捉している場合はOKとなること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.writeSettings(Element("test"))
+    sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストで未定義の例外クラスの捕捉.java")
-  }
-
-  fun `test_独自定義のブラックリストファイルを正常に読み込めること`() {
-    sut.textField.text = testDataPath + "/blacklist.config"
-    sut.errorLabel.text = "ファイルの読み込みに失敗しました。"
-
-    sut.writeSettings(Element("test"))
-
-    TestCase.assertEquals("", sut.errorLabel.text)
-    TestCase.assertEquals(testDataPath + "/blacklist.config", sut.blacklistFile)
   }
 }

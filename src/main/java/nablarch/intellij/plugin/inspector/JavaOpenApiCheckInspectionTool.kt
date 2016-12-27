@@ -2,6 +2,8 @@ package nablarch.intellij.plugin.inspector
 
 import com.intellij.codeHighlighting.*
 import com.intellij.codeInspection.*
+import com.intellij.diagnostic.*
+import com.intellij.openapi.extensions.*
 import com.intellij.openapi.fileChooser.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
@@ -15,8 +17,6 @@ import javax.swing.*
 open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   val textField = JTextField(10)
-
-  val errorLabel = JLabel()
 
   var blacklistFile: String = ""
 
@@ -58,20 +58,12 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
     parent.add(JLabel("使用不許可API定義ファイル:"))
     parent.add(inputPanel)
-    parent.add(errorLabel)
 
     return parent
   }
 
   override fun writeSettings(node: Element) {
-    try {
-      refreshBlacklist()
-      errorLabel.text = ""
-      blacklistFile = textField.text
-    } catch (e: Exception) {
-      errorLabel.text = "ファイルの読み込みに失敗しました。"
-    }
-
+    blacklistFile = textField.text
     super.writeSettings(node)
   }
 
@@ -84,6 +76,24 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : JavaElementVisitor() {
+
+      init {
+        blacklist.clear()
+        if (blacklistFile.isEmpty()) {
+          blacklist.addAll(defaultBlacklist)
+        } else {
+          val file = File(blacklistFile).absoluteFile
+          if (file.exists()) {
+            file.forEachLine {
+              blacklist.add(it)
+            }
+          } else {
+            throw PluginException(
+                "指定されたブラックリスト定義ファイルが見つかりません。 [File: ${file.absolutePath}]",
+                PluginId.getId("com.nablarch.tool.plugin"))
+          }
+        }
+      }
 
       /**
        * メソッド呼び出しのチェック
@@ -111,18 +121,6 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         }
         JavaOpenApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
-      }
-    }
-  }
-
-  private fun refreshBlacklist() {
-    blacklist.clear()
-    if (textField.text.isEmpty()) {
-      blacklist.addAll(defaultBlacklist)
-    } else {
-      val file = File(textField.text).absoluteFile
-      file.forEachLine {
-        blacklist.add(it)
       }
     }
   }
