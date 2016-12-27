@@ -16,7 +16,8 @@ class JavaOpenApiCallInspector(
 
     val method = expression.resolveMethod()
     if (method != null) {
-      if (!isJavaOpenApi(method.containingClass)) {
+
+      if (!isJavaOpenApi(method)) {
         PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
           addUnpermittedProblem(holder, it)
         }

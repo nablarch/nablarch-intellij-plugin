@@ -3,6 +3,7 @@ package nablarch.intellij.plugin.inspector
 import com.intellij.codeInsight.*
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
+import com.intellij.psi.util.*
 import java.io.*
 import java.util.*
 
@@ -15,8 +16,9 @@ val defaultBlacklist = setOf(
     "java.lang.RuntimeException",
     "java.lang.NullPointerException",
     "java.applet.Applet",
-    "java.net.HttpCookie",
-    "java.awt.*"
+    "java.net.HttpCookie.getName()",
+    "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])",
+    "java.awt"
 )
 
 fun isPublishedApi(element: PsiModifierListOwner, categories: List<String>): Boolean {
@@ -53,20 +55,24 @@ fun addUnpermittedProblem(holder: ProblemsHolder, element: PsiElement) {
   holder.registerProblem(element, "使用不許可APIです。")
 }
 
-fun isJavaOpenApi(psiClass: PsiClass?): Boolean {
-  val fqcn = psiClass?.qualifiedName
-  blacklist.forEach {
-    if (it.endsWith(".*")) {
-      if (fqcn!!.startsWith(it.substring(0, it.length - 1))) {
-        return false
-      }
-    } else {
-      if (fqcn!! == it) {
-        return false
-      }
-    }
+fun isJavaOpenApi(psiMethod: PsiMethod): Boolean {
+  val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return true
+  val sb = StringBuilder()
+  sb.append(name).append('(')
+  val paramTypes = psiMethod.getSignature(PsiSubstitutor.EMPTY).parameterTypes.map { it.canonicalText }
+  paramTypes.joinTo(sb)
+  sb.append(')')
+  val fqcn = sb.toString()
+  return !blacklist.any {
+    fqcn.startsWith(it)
   }
-  return true
+}
+
+fun isJavaOpenApi(psiClass: PsiClass): Boolean {
+  val name = PsiUtil.getMemberQualifiedName(psiClass) ?: return true
+  return !blacklist.any {
+    name.startsWith(it)
+  }
 }
 
 fun refreshBlacklist(blacklistFile: String) {
