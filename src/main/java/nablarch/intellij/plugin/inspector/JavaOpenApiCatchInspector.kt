@@ -12,22 +12,22 @@ class JavaOpenApiCatchInspector(
 ) {
 
   fun inspect() {
+    val checker: (PsiClassReferenceType) -> Unit = { type ->
+      PsiTypesUtil.getPsiClass(type)?.let {
+        if (!isJavaOpenApi(it, blacklist)) {
+          addUnpermittedProblem(holder, type.reference)
+        }
+      }
+    }
+
     when (catchType) {
       is PsiDisjunctionType -> {
         catchType.disjunctions.forEach { type ->
-          PsiTypesUtil.getPsiClass(type)?.let {
-            if (!isJavaOpenApi(it, blacklist)) {
-              addUnpermittedProblem(holder, (type as PsiClassReferenceType).reference)
-            }
-          }
+          checker(type as PsiClassReferenceType)
         }
       }
       else -> {
-        PsiTypesUtil.getPsiClass(catchType)?.let {
-          if (!isJavaOpenApi(it, blacklist)) {
-            addUnpermittedProblem(holder, (catchType as PsiClassReferenceType).reference)
-          }
-        }
+        checker(catchType as PsiClassReferenceType)
       }
     }
   }
