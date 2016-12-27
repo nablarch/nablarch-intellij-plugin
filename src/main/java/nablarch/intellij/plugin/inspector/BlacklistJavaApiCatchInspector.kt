@@ -5,7 +5,12 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.*
 import com.intellij.psi.util.*
 
-class JavaOpenApiCatchInspector(
+/**
+ * ブラックリストに定義された例外クラスの捕捉箇所を検出するクラス。
+ *
+ * @author Naoki Yamamoto
+ */
+class BlacklistJavaApiCatchInspector(
     private val catchType: PsiType?,
     private val holder: ProblemsHolder,
     private val blacklist: Set<String>
@@ -15,11 +20,11 @@ class JavaOpenApiCatchInspector(
     if (catchType == null || !catchType.isValid) {
       return
     }
-    
+
     val checker: (PsiClassReferenceType) -> Unit = { type ->
       PsiTypesUtil.getPsiClass(type)?.let {
         if (!isJavaOpenApi(it, blacklist)) {
-          addUnpermittedProblem(holder, type.reference)
+          addBlacklistProblem(holder, type.reference)
         }
       }
     }

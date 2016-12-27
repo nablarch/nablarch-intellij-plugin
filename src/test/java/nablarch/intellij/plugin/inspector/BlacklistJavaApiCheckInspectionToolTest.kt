@@ -14,13 +14,13 @@ import java.net.*
 
 
 /**
- * [JavaOpenApiCheckInspectionTool]のテスト。
+ * [BlacklistJavaApiCheckInspectionTool]のテスト。
  */
-open class JavaOpenApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase() {
+open class BlacklistJavaApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String = "testData/nablarch/intellij/plugin/inspector"
 
-  val sut = JavaOpenApiCheckInspectionTool()
+  val sut = BlacklistJavaApiCheckInspectionTool()
 
   override fun setUp() {
     super.setUp()

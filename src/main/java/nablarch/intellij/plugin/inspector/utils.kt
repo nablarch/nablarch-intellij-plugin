@@ -37,7 +37,7 @@ fun addProblem(holder: ProblemsHolder, element: PsiElement, tags: List<String>) 
   holder.registerProblem(element, "非公開APIです。$option")
 }
 
-fun addUnpermittedProblem(holder: ProblemsHolder, element: PsiElement) {
+fun addBlacklistProblem(holder: ProblemsHolder, element: PsiElement) {
   holder.registerProblem(element, "使用不許可APIです。")
 }
 

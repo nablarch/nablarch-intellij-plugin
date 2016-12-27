@@ -4,7 +4,12 @@ import com.intellij.codeInspection.*
 import com.intellij.psi.*
 import com.intellij.psi.util.*
 
-class JavaOpenApiCallInspector(
+/**
+ * ブラックリストに定義されたメソッドやコンストラクタの呼び出し箇所を検出するクラス。
+ *
+ * @author Naoki Yamamoto
+ */
+class BlacklistJavaApiCallInspector(
     private val expression: PsiCallExpression?,
     private val holder: ProblemsHolder,
     private val blacklist: Set<String>
@@ -20,7 +25,7 @@ class JavaOpenApiCallInspector(
 
       if (!isJavaOpenApi(method, blacklist)) {
         PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
-          addUnpermittedProblem(holder, it)
+          addBlacklistProblem(holder, it)
         }
       }
     } else {
@@ -28,7 +33,7 @@ class JavaOpenApiCallInspector(
         PsiTypesUtil.getPsiClass(expression.type)?.let {
           if (!isJavaOpenApi(it, blacklist)) {
             PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
-              addUnpermittedProblem(holder, it)
+              addBlacklistProblem(holder, it)
             }
           }
         }

@@ -13,8 +13,12 @@ import java.io.*
 import java.util.*
 import javax.swing.*
 
-
-open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
+/**
+ * ブラックリストに定義されたJavaAPIの使用箇所を検出するインスペクタ。
+ *
+ * @author Naoki Yamamoto
+ */
+open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   val textField = JTextField(10)
 
@@ -34,9 +38,9 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   override fun getGroupDisplayName(): String = "nablarch"
 
-  override fun getDisplayName(): String = "use unpermitted java api."
+  override fun getDisplayName(): String = "use blacklist java api."
 
-  override fun getShortName(): String = "unpermittedJavaApi"
+  override fun getShortName(): String = "blacklistJavaApi"
 
   override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
 
@@ -100,7 +104,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         super.visitMethodCallExpression(expression)
-        JavaOpenApiCallInspector(expression, holder, blacklist).inspect()
+        BlacklistJavaApiCallInspector(expression, holder, blacklist).inspect()
       }
 
       /**
@@ -108,7 +112,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitNewExpression(expression: PsiNewExpression?) {
         super.visitNewExpression(expression)
-        JavaOpenApiCallInspector(expression, holder, blacklist).inspect()
+        BlacklistJavaApiCallInspector(expression, holder, blacklist).inspect()
       }
 
       /**
@@ -119,7 +123,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         if (section == null || !section.isValid) {
           return
         }
-        JavaOpenApiCatchInspector(section.catchType, holder, blacklist).inspect()
+        BlacklistJavaApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
       }
     }
