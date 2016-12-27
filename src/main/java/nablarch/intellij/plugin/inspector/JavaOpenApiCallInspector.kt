@@ -6,7 +6,8 @@ import com.intellij.psi.util.*
 
 class JavaOpenApiCallInspector(
     private val expression: PsiCallExpression?,
-    private val holder: ProblemsHolder
+    private val holder: ProblemsHolder,
+    private val blacklist: Set<String>
 ) {
 
   fun inspect() {
@@ -17,7 +18,7 @@ class JavaOpenApiCallInspector(
     val method = expression.resolveMethod()
     if (method != null) {
 
-      if (!isJavaOpenApi(method)) {
+      if (!isJavaOpenApi(method, blacklist)) {
         PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
           addUnpermittedProblem(holder, it)
         }
@@ -25,7 +26,7 @@ class JavaOpenApiCallInspector(
     } else {
       if (expression is PsiNewExpression) {
         PsiTypesUtil.getPsiClass(expression.type)?.let {
-          if (!isJavaOpenApi(it)) {
+          if (!isJavaOpenApi(it, blacklist)) {
             PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
               addUnpermittedProblem(holder, it)
             }

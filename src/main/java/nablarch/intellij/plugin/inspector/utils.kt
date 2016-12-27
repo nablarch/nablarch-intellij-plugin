@@ -4,22 +4,8 @@ import com.intellij.codeInsight.*
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
 import com.intellij.psi.util.*
-import java.io.*
-import java.util.*
 
 val publishAnnotationName = "nablarch.core.util.annotation.Published"
-
-val blacklist = HashSet<String>()
-
-val defaultBlacklist = setOf(
-    "java.lang.Exception",
-    "java.lang.RuntimeException",
-    "java.lang.NullPointerException",
-    "java.applet.Applet",
-    "java.net.HttpCookie.getName()",
-    "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])",
-    "java.awt"
-)
 
 fun isPublishedApi(element: PsiModifierListOwner, categories: List<String>): Boolean {
   return AnnotationUtil.findAnnotation(element, publishAnnotationName)?.let {
@@ -55,7 +41,7 @@ fun addUnpermittedProblem(holder: ProblemsHolder, element: PsiElement) {
   holder.registerProblem(element, "使用不許可APIです。")
 }
 
-fun isJavaOpenApi(psiMethod: PsiMethod): Boolean {
+fun isJavaOpenApi(psiMethod: PsiMethod, blacklist: Set<String>): Boolean {
   val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return true
   val sb = StringBuilder()
   sb.append(name).append('(')
@@ -68,21 +54,9 @@ fun isJavaOpenApi(psiMethod: PsiMethod): Boolean {
   }
 }
 
-fun isJavaOpenApi(psiClass: PsiClass): Boolean {
+fun isJavaOpenApi(psiClass: PsiClass, blacklist: Set<String>): Boolean {
   val name = PsiUtil.getMemberQualifiedName(psiClass) ?: return true
   return !blacklist.any {
     name.startsWith(it)
-  }
-}
-
-fun refreshBlacklist(blacklistFile: String) {
-  blacklist.clear()
-  if (blacklistFile.isEmpty()) {
-    blacklist.addAll(defaultBlacklist)
-  } else {
-    val file = File(blacklistFile).absoluteFile
-    file.forEachLine {
-      blacklist.add(it)
-    }
   }
 }

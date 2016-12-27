@@ -7,6 +7,8 @@ import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
 import com.intellij.psi.*
 import org.jdom.*
+import java.io.*
+import java.util.*
 import javax.swing.*
 
 
@@ -17,6 +19,18 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
   val errorLabel = JLabel()
 
   var blacklistFile: String = ""
+
+  val blacklist = HashSet<String>()
+
+  val defaultBlacklist = setOf(
+      "java.lang.Exception",
+      "java.lang.RuntimeException",
+      "java.lang.NullPointerException",
+      "java.applet.Applet",
+      "java.net.HttpCookie.getName()",
+      "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])",
+      "java.awt"
+  )
 
   override fun getGroupDisplayName(): String = "nablarch"
 
@@ -51,7 +65,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   override fun writeSettings(node: Element) {
     try {
-      refreshBlacklist(textField.text)
+      refreshBlacklist()
       errorLabel.text = ""
       blacklistFile = textField.text
     } catch (e: Exception) {
@@ -76,7 +90,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         super.visitMethodCallExpression(expression)
-        JavaOpenApiCallInspector(expression, holder).inspect()
+        JavaOpenApiCallInspector(expression, holder, blacklist).inspect()
       }
 
       /**
@@ -84,7 +98,7 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
        */
       override fun visitNewExpression(expression: PsiNewExpression?) {
         super.visitNewExpression(expression)
-        JavaOpenApiCallInspector(expression, holder).inspect()
+        JavaOpenApiCallInspector(expression, holder, blacklist).inspect()
       }
 
       /**
@@ -95,8 +109,20 @@ open class JavaOpenApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         if (section == null || !section.isValid) {
           return
         }
-        JavaOpenApiCatchInspector(section.catchType, holder).inspect()
+        JavaOpenApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
+      }
+    }
+  }
+
+  private fun refreshBlacklist() {
+    blacklist.clear()
+    if (textField.text.isEmpty()) {
+      blacklist.addAll(defaultBlacklist)
+    } else {
+      val file = File(textField.text).absoluteFile
+      file.forEachLine {
+        blacklist.add(it)
       }
     }
   }
