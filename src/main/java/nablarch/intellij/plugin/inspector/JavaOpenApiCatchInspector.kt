@@ -12,6 +12,10 @@ class JavaOpenApiCatchInspector(
 ) {
 
   fun inspect() {
+    if (catchType == null || !catchType.isValid) {
+      return
+    }
+    
     val checker: (PsiClassReferenceType) -> Unit = { type ->
       PsiTypesUtil.getPsiClass(type)?.let {
         if (!isJavaOpenApi(it, blacklist)) {
