@@ -12,7 +12,7 @@ import com.intellij.psi.util.*
 class BlacklistJavaApiCallInspector(
     private val expression: PsiCallExpression?,
     private val holder: ProblemsHolder,
-    private val blacklist: Set<String>
+    private val blacklist: Blacklist
 ) {
 
   fun inspect() {
@@ -23,7 +23,7 @@ class BlacklistJavaApiCallInspector(
     val method = expression.resolveMethod()
     if (method != null) {
 
-      if (!isJavaOpenApi(method, blacklist)) {
+      if (isBlacklistJavaApi(method, blacklist)) {
         PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
           addBlacklistProblem(holder, it)
         }
@@ -31,7 +31,7 @@ class BlacklistJavaApiCallInspector(
     } else {
       if (expression is PsiNewExpression) {
         PsiTypesUtil.getPsiClass(expression.type)?.let {
-          if (!isJavaOpenApi(it, blacklist)) {
+          if (isBlacklistJavaApi(it, blacklist)) {
             PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
               addBlacklistProblem(holder, it)
             }

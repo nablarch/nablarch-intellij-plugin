@@ -24,17 +24,11 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   var blacklistFile: String = ""
 
-  val blacklist = HashSet<String>()
+  val defaultBlacklistPackages = listOf("java.awt")
 
-  val defaultBlacklist = setOf(
-      "java.lang.Exception",
-      "java.lang.RuntimeException",
-      "java.lang.NullPointerException",
-      "java.applet.Applet",
-      "java.net.HttpCookie.getName()",
-      "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])",
-      "java.awt"
-  )
+  val defaultBlacklistClasses = listOf("java.lang.Exception", "java.lang.RuntimeException", "java.lang.NullPointerException", "java.applet.Applet")
+
+  val defaultBlacklistMethods = listOf("java.net.HttpCookie.getName()", "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])")
 
   override fun getGroupDisplayName(): String = "nablarch"
 
@@ -79,25 +73,10 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
   override fun isEnabledByDefault(): Boolean = true
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    return object : JavaElementVisitor() {
 
-      init {
-        blacklist.clear()
-        if (blacklistFile.isEmpty()) {
-          blacklist.addAll(defaultBlacklist)
-        } else {
-          val file = File(blacklistFile).absoluteFile
-          if (file.exists()) {
-            file.forEachLine {
-              blacklist.add(it)
-            }
-          } else {
-            throw PluginException(
-                "指定されたブラックリスト定義ファイルが見つかりません。 [File: ${file.absolutePath}]",
-                PluginId.getId("com.nablarch.tool.plugin"))
-          }
-        }
-      }
+    val blacklist = createBlacklist()
+
+    return object : JavaElementVisitor() {
 
       /**
        * メソッド呼び出しのチェック
@@ -125,6 +104,33 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         }
         BlacklistJavaApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
+      }
+    }
+  }
+
+  private fun createBlacklist(): Blacklist {
+    if (blacklistFile.isNullOrBlank()) {
+      return Blacklist(defaultBlacklistPackages, defaultBlacklistClasses, defaultBlacklistMethods)
+    } else {
+      val file = File(blacklistFile).absoluteFile
+      if (file.exists()) {
+        val packages = ArrayList<String>()
+        val classes = ArrayList<String>()
+        val methods = ArrayList<String>()
+        file.forEachLine {
+          if (it.endsWith(".*")) {
+            packages.add(it.trimEnd { it == '*' })
+          } else if (it.endsWith(')')) {
+            methods.add(it)
+          } else if(it.isNotBlank()) {
+            classes.add(it)
+          }
+        }
+        return Blacklist(packages, classes, methods)
+      } else {
+        throw PluginException(
+            "指定されたブラックリスト定義ファイルが見つかりません。 [File: ${file.absolutePath}]",
+            PluginId.getId("com.nablarch.tool.plugin"))
       }
     }
   }

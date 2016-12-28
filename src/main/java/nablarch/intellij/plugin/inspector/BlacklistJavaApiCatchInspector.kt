@@ -13,7 +13,7 @@ import com.intellij.psi.util.*
 class BlacklistJavaApiCatchInspector(
     private val catchType: PsiType?,
     private val holder: ProblemsHolder,
-    private val blacklist: Set<String>
+    private val blacklist: Blacklist
 ) {
 
   fun inspect() {
@@ -23,7 +23,7 @@ class BlacklistJavaApiCatchInspector(
 
     val checker: (PsiClassReferenceType) -> Unit = { type ->
       PsiTypesUtil.getPsiClass(type)?.let {
-        if (!isJavaOpenApi(it, blacklist)) {
+        if (isBlacklistJavaApi(it, blacklist)) {
           addBlacklistProblem(holder, type.reference)
         }
       }

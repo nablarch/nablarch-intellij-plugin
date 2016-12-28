@@ -46,10 +46,6 @@ open class BlacklistJavaApiCheckInspectionToolTest : LightCodeInsightFixtureTest
     myFixture.testHighlighting("ブラックリストに定義された例外クラスの捕捉.java")
   }
 
-  fun `test_ブラックリストに定義されたパッケージ内のクラスを使用している場合はNGとなること`() {
-    myFixture.testHighlighting("ブラックリストに定義されたパッケージ内のクラス.java")
-  }
-
   fun `test_独自定義のブラックリストに定義されたクラスのコンストラクタを呼び出している場合はNGとなること`() {
     sut.blacklistFile = testDataPath + "/blacklist.config"
     myFixture.testHighlighting("独自定義のブラックリストに定義されたクラスのコンストラクタ.java")

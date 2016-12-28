@@ -41,22 +41,30 @@ fun addBlacklistProblem(holder: ProblemsHolder, element: PsiElement) {
   holder.registerProblem(element, "使用不許可APIです。")
 }
 
-fun isJavaOpenApi(psiMethod: PsiMethod, blacklist: Set<String>): Boolean {
-  val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return true
+fun isBlacklistJavaApi(psiMethod: PsiMethod?, blacklist: Blacklist): Boolean {
+  if (psiMethod == null) {
+    return false
+  }
+
+  val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return false
   val sb = StringBuilder()
   sb.append(name).append('(')
   val paramTypes = psiMethod.getSignature(PsiSubstitutor.EMPTY).parameterTypes.map { it.canonicalText }
   paramTypes.joinTo(sb)
   sb.append(')')
   val fqcn = sb.toString()
-  return !blacklist.any {
-    fqcn.startsWith(it)
-  }
+
+  return blacklist.packages.any { fqcn.startsWith(it) } ||
+      blacklist.classes.any { fqcn.startsWith(it)} ||
+      blacklist.methods.contains(fqcn)
 }
 
-fun isJavaOpenApi(psiClass: PsiClass, blacklist: Set<String>): Boolean {
-  val name = PsiUtil.getMemberQualifiedName(psiClass) ?: return true
-  return !blacklist.any {
-    name.startsWith(it)
+fun isBlacklistJavaApi(psiClass: PsiClass?, blacklist: Blacklist): Boolean {
+  if (psiClass == null) {
+    return false
   }
+
+  val fqcn = PsiUtil.getMemberQualifiedName(psiClass) ?: return false
+  return blacklist.packages.any { fqcn.startsWith(it) } ||
+      blacklist.classes.any { fqcn.startsWith(it)}
 }
