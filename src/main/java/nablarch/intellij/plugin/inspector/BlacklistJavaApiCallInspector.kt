@@ -23,7 +23,7 @@ class BlacklistJavaApiCallInspector(
     val method = expression.resolveMethod()
     if (method != null) {
 
-      if (isBlacklistJavaApi(method, blacklist)) {
+      if (blacklist.isBlacklistJavaApi(method)) {
         PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
           addBlacklistProblem(holder, it)
         }
@@ -31,7 +31,7 @@ class BlacklistJavaApiCallInspector(
     } else {
       if (expression is PsiNewExpression) {
         PsiTypesUtil.getPsiClass(expression.type)?.let {
-          if (isBlacklistJavaApi(it, blacklist)) {
+          if (blacklist.isBlacklistJavaApi(it)) {
             PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
               addBlacklistProblem(holder, it)
             }

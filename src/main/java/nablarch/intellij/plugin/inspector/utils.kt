@@ -3,7 +3,6 @@ package nablarch.intellij.plugin.inspector
 import com.intellij.codeInsight.*
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
-import com.intellij.psi.util.*
 
 val publishAnnotationName = "nablarch.core.util.annotation.Published"
 
@@ -39,32 +38,4 @@ fun addProblem(holder: ProblemsHolder, element: PsiElement, tags: List<String>) 
 
 fun addBlacklistProblem(holder: ProblemsHolder, element: PsiElement) {
   holder.registerProblem(element, "使用不許可APIです。")
-}
-
-fun isBlacklistJavaApi(psiMethod: PsiMethod?, blacklist: Blacklist): Boolean {
-  if (psiMethod == null) {
-    return false
-  }
-
-  val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return false
-  val sb = StringBuilder()
-  sb.append(name).append('(')
-  val paramTypes = psiMethod.getSignature(PsiSubstitutor.EMPTY).parameterTypes.map { it.canonicalText }
-  paramTypes.joinTo(sb)
-  sb.append(')')
-  val fqcn = sb.toString()
-
-  return blacklist.packages.any { fqcn.startsWith(it) } ||
-      blacklist.classes.any { fqcn.startsWith(it)} ||
-      blacklist.methods.contains(fqcn)
-}
-
-fun isBlacklistJavaApi(psiClass: PsiClass?, blacklist: Blacklist): Boolean {
-  if (psiClass == null) {
-    return false
-  }
-
-  val fqcn = PsiUtil.getMemberQualifiedName(psiClass) ?: return false
-  return blacklist.packages.any { fqcn.startsWith(it) } ||
-      blacklist.classes.any { fqcn.startsWith(it)}
 }

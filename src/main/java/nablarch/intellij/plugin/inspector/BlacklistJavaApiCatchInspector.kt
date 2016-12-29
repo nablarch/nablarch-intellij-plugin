@@ -23,7 +23,7 @@ class BlacklistJavaApiCatchInspector(
 
     val checker: (PsiClassReferenceType) -> Unit = { type ->
       PsiTypesUtil.getPsiClass(type)?.let {
-        if (isBlacklistJavaApi(it, blacklist)) {
+        if (blacklist.isBlacklistJavaApi(it)) {
           addBlacklistProblem(holder, type.reference)
         }
       }
