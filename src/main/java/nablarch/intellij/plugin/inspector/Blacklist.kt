@@ -25,7 +25,7 @@ data class Blacklist(val packages: List<String>, val classes: List<String>, val 
   }
 
   fun isBlacklistJavaApi(psiClass: PsiClass): Boolean {
-    val fqcn = PsiUtil.getMemberQualifiedName(psiClass) ?: return false
+    val fqcn = psiClass.qualifiedName ?: return false
     return packages.any { fqcn.startsWith(it) } ||
         classes.any { fqcn.startsWith(it)}
   }
