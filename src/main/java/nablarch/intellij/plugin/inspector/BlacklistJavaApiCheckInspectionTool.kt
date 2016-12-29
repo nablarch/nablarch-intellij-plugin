@@ -109,7 +109,7 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
   }
 
   private fun createBlacklist(): Blacklist {
-    if (blacklistFile.isNullOrBlank()) {
+    if (blacklistFile.isBlank()) {
       return Blacklist(defaultBlacklistPackages, defaultBlacklistClasses, defaultBlacklistMethods)
     } else {
       val file = File(blacklistFile).absoluteFile
