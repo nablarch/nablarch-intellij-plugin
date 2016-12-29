@@ -112,7 +112,7 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
     if (blacklistFile.isBlank()) {
       return Blacklist(defaultBlacklistPackages, defaultBlacklistClasses, defaultBlacklistMethods)
     } else {
-      val file = File(blacklistFile).absoluteFile
+      val file = File(blacklistFile)
       if (file.exists()) {
         val packages = ArrayList<String>()
         val classes = ArrayList<String>()
