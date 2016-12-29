@@ -10,11 +10,7 @@ import com.intellij.psi.util.*
  */
 data class Blacklist(val packages: List<String>, val classes: List<String>, val methods: List<String>) {
 
-  fun isBlacklistJavaApi(psiMethod: PsiMethod?): Boolean {
-    if (psiMethod == null) {
-      return false
-    }
-
+  fun isBlacklistJavaApi(psiMethod: PsiMethod): Boolean {
     val name = PsiUtil.getMemberQualifiedName(psiMethod) ?: return false
     val sb = StringBuilder()
     sb.append(name).append('(')
@@ -28,11 +24,7 @@ data class Blacklist(val packages: List<String>, val classes: List<String>, val 
         methods.contains(fqcn)
   }
 
-  fun isBlacklistJavaApi(psiClass: PsiClass?): Boolean {
-    if (psiClass == null) {
-      return false
-    }
-
+  fun isBlacklistJavaApi(psiClass: PsiClass): Boolean {
     val fqcn = PsiUtil.getMemberQualifiedName(psiClass) ?: return false
     return packages.any { fqcn.startsWith(it) } ||
         classes.any { fqcn.startsWith(it)}
