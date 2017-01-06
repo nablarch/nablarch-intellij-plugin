@@ -10,34 +10,23 @@ import com.intellij.psi.util.*
  * @author Naoki Yamamoto
  */
 class BlacklistJavaApiCallInspector(
-    private val expression: PsiCallExpression?,
+    private val element: PsiTypeElement?,
     private val holder: ProblemsHolder,
     private val blacklist: Blacklist
 ) {
 
   fun inspect() {
-    if (expression == null || !expression.isValid) {
+    if (element == null || !element.isValid) {
       return
     }
 
-    val method = expression.resolveMethod()
-    if (method != null) {
-
-      if (blacklist.isBlacklistJavaApi(method)) {
-        PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
+    PsiTypesUtil.getPsiClass(element.type)?.let {
+      if (blacklist.isBlacklistJavaApi(it)) {
+        PsiTreeUtil.findChildOfAnyType(element, PsiJavaCodeReferenceElement::class.java)?.let {
           addBlacklistProblem(holder, it)
         }
       }
-    } else {
-      if (expression is PsiNewExpression) {
-        PsiTypesUtil.getPsiClass(expression.type)?.let {
-          if (blacklist.isBlacklistJavaApi(it)) {
-            PsiTreeUtil.findChildOfAnyType(expression, PsiJavaCodeReferenceElement::class.java)?.let {
-              addBlacklistProblem(holder, it)
-            }
-          }
-        }
-      }
     }
+
   }
 }

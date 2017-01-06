@@ -24,12 +24,6 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   var blacklistFile: String = ""
 
-  val defaultBlacklistPackages = listOf("java.awt")
-
-  val defaultBlacklistClasses = listOf("java.lang.Exception", "java.lang.RuntimeException", "java.lang.NullPointerException", "java.applet.Applet")
-
-  val defaultBlacklistMethods = listOf("java.net.HttpCookie.getName()", "java.net.PasswordAuthentication.PasswordAuthentication(java.lang.String, char[])")
-
   override fun getGroupDisplayName(): String = "nablarch"
 
   override fun getDisplayName(): String = "use blacklist java api."
@@ -79,19 +73,11 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
     return object : JavaElementVisitor() {
 
       /**
-       * メソッド呼び出しのチェック
+       * クラスの使用箇所のチェック
        */
-      override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
-        super.visitMethodCallExpression(expression)
-        BlacklistJavaApiCallInspector(expression, holder, blacklist).inspect()
-      }
-
-      /**
-       * コンストラクタ呼び出しのチェック
-       */
-      override fun visitNewExpression(expression: PsiNewExpression?) {
-        super.visitNewExpression(expression)
-        BlacklistJavaApiCallInspector(expression, holder, blacklist).inspect()
+      override fun visitTypeElement(type: PsiTypeElement?) {
+        super.visitTypeElement(type)
+        BlacklistJavaApiCallInspector(type, holder, blacklist).inspect()
       }
 
       /**
@@ -110,23 +96,20 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   private fun createBlacklist(): Blacklist {
     if (blacklistFile.isBlank()) {
-      return Blacklist(defaultBlacklistPackages, defaultBlacklistClasses, defaultBlacklistMethods)
+      return Blacklist()
     } else {
       val file = File(blacklistFile)
       if (file.exists()) {
         val packages = ArrayList<String>()
         val classes = ArrayList<String>()
-        val methods = ArrayList<String>()
         file.forEachLine {
           if (it.endsWith(".*")) {
             packages.add(it.trimEnd { it == '*' })
-          } else if (it.endsWith(')')) {
-            methods.add(it)
-          } else if(it.isNotBlank()) {
+          } else if (it.isNotBlank()){
             classes.add(it)
           }
         }
-        return Blacklist(packages, classes, methods)
+        return Blacklist(packages, classes)
       } else {
         throw PluginException(
             "指定されたブラックリスト定義ファイルが見つかりません。 [File: ${file.absolutePath}]",

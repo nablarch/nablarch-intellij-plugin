@@ -6,16 +6,13 @@ import java.sql.SQLException;
 public class 独自定義のブラックリストに定義された例外クラスの捕捉 {
 
     public void method() {
-
-        // クラス指定
         try {
-            throw new <error descr="使用不許可APIです。">SQLException</error>();
+            throw new SQLException();
         } catch (<error descr="使用不許可APIです。">SQLException</error> e) {
         }
 
-        // パッケージ指定
         try {
-            throw new <error descr="使用不許可APIです。">IntrospectionException</error>("message");
+            throw new IntrospectionException("message");
         } catch (<error descr="使用不許可APIです。">IntrospectionException</error> e) {
         }
     }

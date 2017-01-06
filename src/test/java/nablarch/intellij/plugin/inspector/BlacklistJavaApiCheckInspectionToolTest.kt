@@ -34,26 +34,17 @@ open class BlacklistJavaApiCheckInspectionToolTest : LightCodeInsightFixtureTest
 
   // -------------------------------------------------------------------------------- NGパターン
 
-  fun `test_ブラックリストに定義されたクラスのコンストラクタを呼び出している場合はNGとなること`() {
-    myFixture.testHighlighting("ブラックリストに定義されたクラスのコンストラクタ.java")
-  }
-
-  fun `test_ブラックリストに定義されたクラスのメソッドを呼び出している場合はNGとなること`() {
-    myFixture.testHighlighting("ブラックリストに定義されたクラスのメソッド.java")
+  fun `test_ブラックリストに定義されたクラスを使用している場合はNGとなること`() {
+    myFixture.testHighlighting("ブラックリストに定義されたクラス.java")
   }
 
   fun `test_ブラックリストに定義された例外クラスを捕捉している場合はNGとなること`() {
     myFixture.testHighlighting("ブラックリストに定義された例外クラスの捕捉.java")
   }
 
-  fun `test_独自定義のブラックリストに定義されたクラスのコンストラクタを呼び出している場合はNGとなること`() {
+  fun `test_独自定義のブラックリストに定義されたクラスを使用している場合はNGとなること`() {
     sut.blacklistFile = testDataPath + "/blacklist.config"
-    myFixture.testHighlighting("独自定義のブラックリストに定義されたクラスのコンストラクタ.java")
-  }
-
-  fun `test_独自定義のブラックリストに定義されたクラスのメソッドを呼び出している場合はNGとなること`() {
-    sut.blacklistFile = testDataPath + "/blacklist.config"
-    myFixture.testHighlighting("独自定義のブラックリストに定義されたクラスのメソッド.java")
+    myFixture.testHighlighting("独自定義のブラックリストに定義されたクラス.java")
   }
 
   fun `test_独自定義のブラックリストに定義された例外クラスを捕捉している場合はNGとなること`() {
@@ -77,26 +68,17 @@ open class BlacklistJavaApiCheckInspectionToolTest : LightCodeInsightFixtureTest
 
   // -------------------------------------------------------------------------------- OKパターン
 
-  fun `test_ブラックリストで未定義のクラスのコンストラクタを呼び出している場合はOKとなること`() {
-    myFixture.testHighlighting("ブラックリストで未定義のクラスのコンストラクタ.java")
-  }
-
-  fun `test_ブラックリストで未定義のクラスのメソッドを呼び出している場合はOKとなること`() {
-    myFixture.testHighlighting("ブラックリストで未定義のクラスのメソッド.java")
+  fun `test_ブラックリストで未定義のクラスを使用している場合はOKとなること`() {
+    myFixture.testHighlighting("ブラックリストで未定義のクラス.java")
   }
 
   fun `test_ブラックリストで未定義の例外クラスを捕捉している場合はOKとなること`() {
     myFixture.testHighlighting("ブラックリストで未定義の例外クラスの捕捉.java")
   }
 
-  fun `test_独自定義のブラックリストで未定義のクラスのコンストラクタを呼び出している場合はOKとなること`() {
+  fun `test_独自定義のブラックリストで未定義のクラスを使用している場合はOKとなること`() {
     sut.blacklistFile = testDataPath + "/blacklist.config"
-    myFixture.testHighlighting("独自定義のブラックリストで未定義のクラスのコンストラクタ.java")
-  }
-
-  fun `test_独自定義のブラックリストで未定義のクラスのメソッドを呼び出している場合はOKとなること`() {
-    sut.blacklistFile = testDataPath + "/blacklist.config"
-    myFixture.testHighlighting("独自定義のブラックリストで未定義のクラスのメソッド.java")
+    myFixture.testHighlighting("独自定義のブラックリストで未定義のクラス.java")
   }
 
   fun `test_独自定義のブラックリストで未定義の例外クラスを捕捉している場合はOKとなること`() {
