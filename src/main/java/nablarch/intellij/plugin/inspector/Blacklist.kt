@@ -25,7 +25,9 @@ data class Blacklist(
 
   fun isBlacklistJavaApi(psiClass: PsiClass): Boolean {
     val fqcn = psiClass.qualifiedName ?: return false
-    return packages.any { fqcn.startsWith(it) } ||
+    val packageName = (psiClass.containingFile as PsiJavaFile).packageName
+
+    return packages.any { packageName == it } ||
         classes.any { fqcn == it }
   }
 

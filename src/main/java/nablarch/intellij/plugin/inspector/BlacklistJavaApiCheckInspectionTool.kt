@@ -7,6 +7,7 @@ import com.intellij.openapi.extensions.*
 import com.intellij.openapi.fileChooser.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
+import com.intellij.openapi.util.text.*
 import com.intellij.psi.*
 import org.jdom.*
 import java.io.*
@@ -104,7 +105,7 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         val classes = ArrayList<String>()
         file.forEachLine {
           if (it.endsWith(".*")) {
-            packages.add(it.trimEnd { it == '*' })
+            packages.add(StringUtil.trimEnd(it, ".*"))
           } else if (it.isNotBlank()){
             classes.add(it)
           }
