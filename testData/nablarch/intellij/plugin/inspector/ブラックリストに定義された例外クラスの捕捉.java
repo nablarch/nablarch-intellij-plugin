@@ -10,8 +10,8 @@ public class ブラックリストに定義された例外クラスの捕捉 {
         }
 
         try {
-            throw new RuntimeException();
-        } catch (IllegalArgumentException | <error descr="使用不許可APIです。">NullPointerException</error> e) {
+            throw new Exception();
+        } catch (<error descr="使用不許可APIです。">Exception</error> | <error descr="使用不許可APIです。">Error</error> e) {
         }
     }
 }
