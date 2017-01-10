@@ -82,6 +82,14 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
       }
 
       /**
+       * クラスへの参照箇所をチェック
+       */
+      override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
+        super.visitReferenceExpression(expression)
+        BlacklistJavaApiReferenceInspector(expression, holder, blacklist).inspect()
+      }
+
+      /**
        * catchでの例外捕捉のチェック
        */
       override fun visitCatchSection(section: PsiCatchSection?) {

@@ -5,7 +5,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.*
 
 /**
- * ブラックリストに定義されたメソッドやコンストラクタの呼び出し箇所を検出するクラス。
+ * ブラックリストに定義されたクラスの呼び出し箇所を検出するクラス。
  *
  * @author Naoki Yamamoto
  */
