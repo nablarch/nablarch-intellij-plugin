@@ -23,7 +23,7 @@ fun isPublishedApi(element: PsiModifierListOwner, categories: List<String>): Boo
       else -> false
     }
   } ?: false
-} 
+}
 
 fun isNablarchClass(psiClass: PsiClass?): Boolean = psiClass?.qualifiedName?.startsWith("nablarch.") ?: false
 
@@ -36,3 +36,6 @@ fun addProblem(holder: ProblemsHolder, element: PsiElement, tags: List<String>) 
   holder.registerProblem(element, "非公開APIです。$option")
 }
 
+fun addBlacklistProblem(holder: ProblemsHolder, element: PsiElement) {
+  holder.registerProblem(element, "使用不許可APIです。")
+}

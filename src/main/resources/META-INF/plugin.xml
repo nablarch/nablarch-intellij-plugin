@@ -20,7 +20,7 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <inspectionToolProvider implementation="nablarch.intellij.plugin.inspector.PublishApiCheckInspectionToolProvider" order="first"/>
+    <inspectionToolProvider implementation="nablarch.intellij.plugin.inspector.NablarchInspectionToolProvider" order="first"/>
   </extensions>
 
   <actions>
