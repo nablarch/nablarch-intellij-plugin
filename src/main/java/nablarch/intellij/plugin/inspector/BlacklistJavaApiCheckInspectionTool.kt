@@ -31,7 +31,7 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   override fun getShortName(): String = "blacklistJavaApi"
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
+  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
 
   override fun createOptionsPanel(): JComponent? {
 

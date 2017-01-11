@@ -6,12 +6,12 @@ public class ブラックリストに定義された例外クラスの捕捉 {
 
         try {
             throw new Exception();
-        } catch (<error descr="使用不許可APIです。">Exception</error> e) {
+        } catch (<warning descr="使用不許可APIです。">Exception</warning> e) {
         }
 
         try {
             throw new Exception();
-        } catch (<error descr="使用不許可APIです。">Exception</error> | <error descr="使用不許可APIです。">Error</error> e) {
+        } catch (<warning descr="使用不許可APIです。">Exception</warning> | <warning descr="使用不許可APIです。">Error</warning> e) {
         }
     }
 }
