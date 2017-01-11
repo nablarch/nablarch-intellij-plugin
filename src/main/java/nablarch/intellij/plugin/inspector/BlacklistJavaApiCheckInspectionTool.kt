@@ -100,6 +100,17 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         BlacklistJavaApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
       }
+
+      /**
+       * throwでの例外送出のチェック
+       */
+      override fun visitThrowStatement(statement: PsiThrowStatement?) {
+        super.visitThrowStatement(statement)
+        if (statement == null || !statement.isValid) {
+          return
+        }
+        BlacklistJavaApiThrowInspector(statement.exception, holder, blacklist).inspect()
+      }
     }
   }
 

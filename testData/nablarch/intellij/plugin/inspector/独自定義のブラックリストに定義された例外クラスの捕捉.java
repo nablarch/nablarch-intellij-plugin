@@ -7,12 +7,12 @@ public class 独自定義のブラックリストに定義された例外クラ�
 
     public void method() {
         try {
-            throw new SQLException();
+            throw new <warning descr="使用不許可APIです。">SQLException</warning>();
         } catch (<warning descr="使用不許可APIです。">SQLException</warning> e) {
         }
 
         try {
-            throw new IntrospectionException("message");
+            throw new <warning descr="使用不許可APIです。">IntrospectionException</warning>("message");
         } catch (<warning descr="使用不許可APIです。">IntrospectionException</warning> e) {
         }
     }
