@@ -2,7 +2,6 @@ package nablarch.intellij.plugin.inspector
 
 import com.intellij.codeInspection.*
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.*
 import com.intellij.psi.util.*
 
 /**
