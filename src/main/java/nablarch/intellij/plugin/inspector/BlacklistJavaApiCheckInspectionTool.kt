@@ -31,7 +31,7 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
 
   override fun getShortName(): String = "blacklistJavaApi"
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
+  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
 
   override fun createOptionsPanel(): JComponent? {
 
@@ -90,6 +90,22 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
       }
 
       /**
+       * インスタンス生成のチェック
+       */
+      override fun visitNewExpression(expression: PsiNewExpression?) {
+        super.visitNewExpression(expression)
+        BlacklistJavaApiInstanceInspector(expression, holder, blacklist).inspect()
+      }
+
+      /**
+       * ラムダ式のチェック
+       */
+      override fun visitLambdaExpression(expression: PsiLambdaExpression?) {
+        super.visitLambdaExpression(expression)
+        BlacklistJavaApiLambdaInspector(expression, holder, blacklist).inspect()
+      }
+
+      /**
        * catchでの例外捕捉のチェック
        */
       override fun visitCatchSection(section: PsiCatchSection?) {
@@ -99,6 +115,17 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         }
         BlacklistJavaApiCatchInspector(section.catchType, holder, blacklist).inspect()
 
+      }
+
+      /**
+       * throwでの例外送出のチェック
+       */
+      override fun visitThrowStatement(statement: PsiThrowStatement?) {
+        super.visitThrowStatement(statement)
+        if (statement == null || !statement.isValid) {
+          return
+        }
+        BlacklistJavaApiThrowInspector(statement.exception, holder, blacklist).inspect()
       }
     }
   }
