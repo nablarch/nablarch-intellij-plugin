@@ -90,6 +90,22 @@ open class BlacklistJavaApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
       }
 
       /**
+       * インスタンス生成のチェック
+       */
+      override fun visitNewExpression(expression: PsiNewExpression?) {
+        super.visitNewExpression(expression)
+        BlacklistJavaApiInstanceInspector(expression, holder, blacklist).inspect()
+      }
+
+      /**
+       * ラムダ式のチェック
+       */
+      override fun visitLambdaExpression(expression: PsiLambdaExpression?) {
+        super.visitLambdaExpression(expression)
+        BlacklistJavaApiLambdaInspector(expression, holder, blacklist).inspect()
+      }
+
+      /**
        * catchでの例外捕捉のチェック
        */
       override fun visitCatchSection(section: PsiCatchSection?) {
