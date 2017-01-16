@@ -1,7 +1,6 @@
 <idea-plugin version="2">
   <id>com.nablarch.tool.plugin</id>
   <name>nablarch support plugin</name>
-  <version>0.0.1</version>
   <vendor email="nablarch@tis.co.jp">tis</vendor>
 
   <description><![CDATA[
