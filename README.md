@@ -8,3 +8,9 @@
 ## インストール
 
 - リリースページからzipファイルをダウンロードし、IntelliJ IDEAにプラグインをインストールする
+
+## TIPS
+
+### @Published(tag="architect")を許可したい
+
+Settings > Editor > Inspections > nablarch/use unpublished apiで「呼び出しを許可するタグのリスト」に architect を足す。
