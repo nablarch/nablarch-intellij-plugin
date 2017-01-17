@@ -14,3 +14,7 @@
 ### @Published(tag="architect")を許可したい
 
 Settings > Editor > Inspections > nablarch/use unpublished apiで「呼び出しを許可するタグのリスト」に architect を足す。
+
+### 併せて使いたい「Nablarchの開発を少しサポートするIntelliJ IDEA用のプラグイン」
+
+https://github.com/siosio/nablarch-helper
