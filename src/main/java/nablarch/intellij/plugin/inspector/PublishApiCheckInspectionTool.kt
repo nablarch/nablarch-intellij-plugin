@@ -76,13 +76,17 @@ open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
           return
         }
 
+        val catchType = section.catchType
+        if (!(catchType?.isValid ?: false)) {
+          return
+        }
+
         val checker: (PsiClassReferenceType) -> Unit = { type ->
           PsiTypesUtil.getPsiClass(type)?.let {
             VariableDefinitionInspector(type.reference, it, holder, tags).inspect()
           }
         }
 
-        val catchType = section.catchType
         when (catchType) {
           // multi catch
           is PsiDisjunctionType -> {
