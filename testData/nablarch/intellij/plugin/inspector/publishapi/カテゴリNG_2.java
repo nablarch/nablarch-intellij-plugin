@@ -5,7 +5,7 @@ import nablarch.test.*;
 public class カテゴリNG_2 {
 
     public void method() {
-        Hoge hoge = new <error descr="非公開APIです。(許可タグリストなし)">Hoge</error>();
+        Hoge hoge = <error descr="非公開APIです。(許可タグリストなし)">new Hoge()</error>;
     }
 
 }

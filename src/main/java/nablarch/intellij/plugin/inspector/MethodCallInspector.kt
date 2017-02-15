@@ -26,11 +26,7 @@ class MethodCallInspector(
         return
       }
       if (!isPublishedMethod(method) && !isPublishedClass(method)) {
-        PsiTreeUtil.findChildrenOfAnyType(expression, PsiIdentifier::class.java).firstOrNull {
-          it.text == method.name
-        }?.let {
-          addProblem(holder, it, tags)
-        }
+        addProblem(holder, expression, tags)
       }
     } else {
       if (expression is PsiNewExpression) {

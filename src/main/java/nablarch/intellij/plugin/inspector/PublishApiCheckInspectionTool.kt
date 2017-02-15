@@ -12,7 +12,7 @@ import javax.swing.*
 
 /**
  * Nablarchの非公開APIの使用箇所を検出するインスペクタ実装。
- * 
+ *
  * @author siosio
  */
 open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
@@ -67,6 +67,19 @@ open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
         MethodCallInspector(expression, holder, tags).inspect()
       }
 
+      override fun visitClass(aClass: PsiClass?) {
+        super.visitClass(aClass)
+        if (aClass == null || !aClass.isValid) {
+          return
+        }
+
+        (aClass.extendsListTypes + aClass.implementsListTypes).forEach {
+          if (it is PsiClassReferenceType) {
+            inspectPsiClassReferenceType(it)
+          }
+        }
+      }
+
       /**
        * catchでの例外捕捉のチェック
        */
@@ -81,25 +94,24 @@ open class PublishApiCheckInspectionTool : BaseJavaLocalInspectionTool() {
           return
         }
 
-        val checker: (PsiClassReferenceType) -> Unit = { type ->
-          PsiTypesUtil.getPsiClass(type)?.let {
-            VariableDefinitionInspector(type.reference, it, holder, tags).inspect()
-          }
-        }
-
         when (catchType) {
-          // multi catch
+        // multi catch
           is PsiDisjunctionType -> {
             catchType.disjunctions.forEach { type ->
-              checker(type as PsiClassReferenceType)
+              inspectPsiClassReferenceType(type as PsiClassReferenceType)
             }
           }
-          // single catch
+        // single catch
           else -> {
-            checker(catchType as PsiClassReferenceType)
+            inspectPsiClassReferenceType(catchType as PsiClassReferenceType)
           }
         }
+      }
 
+      private fun inspectPsiClassReferenceType(type: PsiClassReferenceType) {
+        PsiTypesUtil.getPsiClass(type)?.let {
+          VariableDefinitionInspector(type.reference, it, holder, tags).inspect()
+        }
       }
     }
   }
