@@ -18,7 +18,7 @@ import java.math.*
  */
 open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase() {
 
-  override fun getTestDataPath(): String = "testData/nablarch/intellij/plugin/inspector"
+  override fun getTestDataPath(): String = "testData/nablarch/intellij/plugin/inspector/publishapi"
   
 
   override fun setUp() {
@@ -161,5 +161,33 @@ open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase()
       }
     """)
     myFixture.testHighlighting("カテゴリOK.java")
+  }
+
+  fun `test_非公開クラスを継承した場合NGとなること`() {
+    myFixture.testHighlighting("非公開クラスの継承.java")
+  }
+
+  fun `test_非公開インタフェースを実装した場合NGとなること`() {
+    myFixture.testHighlighting("非公開インタフェースの実装.java")
+  }
+
+  fun `test_非公開コンストラクタのsuper呼び出しはNGとなること`() {
+    myFixture.addClass("""
+      package nablarch.test;
+      import nablarch.core.util.annotation.Published;
+      public class Hoge {
+
+          public Hoge(String str) {
+          }
+
+          @Published
+          public void test() {};
+      }
+    """)
+    myFixture.testHighlighting("非公開コンストラクタのsuper呼び出し.java")
+  }
+
+  fun `test_公開メソッドを持つクラスは継承できること`() {
+    myFixture.testHighlighting("公開メソッドを持つクラスの継承.java")
   }
 }
