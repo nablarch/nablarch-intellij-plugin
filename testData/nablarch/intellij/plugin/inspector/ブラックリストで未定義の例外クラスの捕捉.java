@@ -10,6 +10,11 @@ public class ブラックリストで未定義の例外クラスの捕捉 {
             throw new IOException();
         } catch (IOException e) {
         }
+        
+        try {
+            throw new IllegalStateException("error");
+        } catch (RuntimeException e) {
+        }
 
         try {
         } catch (IllegalArgumentException | IllegalStateException e) {
