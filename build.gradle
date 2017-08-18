@@ -47,6 +47,16 @@ dependencies {
   testCompile 'com.nablarch.framework:nablarch-fw-web:+'
 }
 
+test {
+  reports {
+
+    html {
+      destination file("$testReportDir")
+    }
+
+  }
+}
+
 task wrapper(type: Wrapper) {
   gradleVersion = '3.1'
 }
