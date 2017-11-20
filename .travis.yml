@@ -16,7 +16,7 @@ script:
 - git clone -b master https://github.com/nablarch/nablarch-ci-script.git $HOME/build-script/
   && chmod +x $HOME/build-script/travis-ci/*.sh
 - $HOME/build-script/travis-ci/build-nablarch-gradle.sh -p nodeploy
-- $HOME/build-script/travis-ci/upload-test-report-by-curl.sh
+- $HOME/build-script/travis-ci/upload-test-report-by-curl.sh -d 'build/reports/tests'
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 notifications:
