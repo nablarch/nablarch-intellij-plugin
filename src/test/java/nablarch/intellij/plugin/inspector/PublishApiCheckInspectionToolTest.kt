@@ -1,8 +1,8 @@
 package nablarch.intellij.plugin.inspector
 
-import com.intellij.openapi.roots.*
 import com.intellij.pom.java.*
 import com.intellij.testFramework.*
+import com.intellij.testFramework.builders.*
 import com.intellij.testFramework.fixtures.*
 import com.intellij.util.*
 import nablarch.core.message.*
@@ -10,32 +10,37 @@ import nablarch.fw.*
 import nablarch.fw.results.*
 import nablarch.fw.web.*
 import org.apache.commons.httpclient.*
-import java.math.*
+import java.io.*
 
 
 /**
  * [PublishApiCheckInspectionTool]のテスト。
  */
-open class PublishApiCheckInspectionToolTest : LightCodeInsightFixtureTestCase() {
+@TestDataPath("\$CONTENT_ROOT/testData/nablarch/intellij/plugin/inspector/publishapi")
+open class PublishApiCheckInspectionToolTest : JavaCodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String = "testData/nablarch/intellij/plugin/inspector/publishapi"
-  
 
   override fun setUp() {
     super.setUp()
     val publishApiCheckInspectionTool = PublishApiCheckInspectionTool()
     publishApiCheckInspectionTool.tags.add("architect")
     myFixture.enableInspections(publishApiCheckInspectionTool)
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(HttpRequest::class.java))
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(ExecutionContext::class.java))
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(BigDecimal::class.java))
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(HttpClient::class.java))
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(MessageUtil::class.java))
-    PsiTestUtil.addLibrary(myModule, PathUtil.getJarPathForClass(TransactionAbnormalEnd::class.java))
-    LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
   }
-  
-  // -------------------------------------------------------------------------------- lNGパターン
+
+  override fun tuneFixture(moduleBuilder: JavaModuleFixtureBuilder<*>) {
+    val path = PathUtil.getJarPathForClass(HttpRequest::class.java)
+    moduleBuilder.addContentRoot(File(path).parentFile.parentFile.parentFile.parent)
+    moduleBuilder.setLanguageLevel(LanguageLevel.JDK_1_8)
+    moduleBuilder.addLibrary("jre", PathUtil.getJarPathForClass(java.lang.Object::class.java))
+    moduleBuilder.addLibrary("nablarch-cw-web", PathUtil.getJarPathForClass(HttpRequest::class.java))
+    moduleBuilder.addLibrary("nablarch-core", PathUtil.getJarPathForClass(ExecutionContext::class.java))
+    moduleBuilder.addLibrary("nablarch-core-message", PathUtil.getJarPathForClass(MessageUtil::class.java))
+    moduleBuilder.addLibrary("nablarch-fw", PathUtil.getJarPathForClass(TransactionAbnormalEnd::class.java))
+    moduleBuilder.addLibrary("http-client", PathUtil.getJarPathForClass(HttpClient::class.java))
+  }
+
+  // -------------------------------------------------------------------------------- NGパターン
   
   fun `test_非公開なメソッドを呼び出している場合はNGとなること`() {
     myFixture.testHighlighting("非公開メソッドの呼び出し.java")
