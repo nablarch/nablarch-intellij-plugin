@@ -30,8 +30,8 @@ http://siosio.hatenablog.com/entry/2016/12/23/212140
 
 ### 使用不許可APIをカスタマイズしたい
 
-1. 下記のように、使用不許可APIをブラックリスト（BlackList.config）としてを作成してローカルで保存する。  
-※「.*」がある時はパッケージ指定、そうでないときはクラス指定と判定される。
+1. 下記のように、使用不許可APIをブラックリスト（BlackList.config）として作成してローカルで保存する。  
+※「.*」がある時はパッケージ指定、そうでない時はクラス指定と判定される。
   ```
   java.security.interfaces.*
   java.security.spec.*
