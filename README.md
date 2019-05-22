@@ -27,3 +27,14 @@ https://github.com/siosio/nablarch-helper
 
 JenkinsでIntelliJ IDEAのinspectionを実行して結果をいい感じに表示させてみる
 http://siosio.hatenablog.com/entry/2016/12/23/212140
+
+### 使用不許可APIをカスタマイズしたい
+
+1. 下記のように、使用不許可APIをブラックリスト（BlackList.config）として作成してローカルで保存する。  
+※「.*」がある時はパッケージ指定、そうでない時はクラス指定と判定される。
+  ```
+  java.security.interfaces.*
+  java.security.spec.*
+  java.lang.Error
+  ```
+2. IntelliJで Settings > Editor > Inspections > nablarch/use blacklist java api で上記ブラックリストファイルを指定する。
