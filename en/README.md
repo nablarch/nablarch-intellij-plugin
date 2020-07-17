@@ -4,37 +4,36 @@
 |:-----------|:------------|
 |[![Build Status](https://travis-ci.org/nablarch/nablarch-intellij-plugin.svg?branch=master)](https://travis-ci.org/nablarch/nablarch-intellij-plugin)|[![Build Status](https://travis-ci.org/nablarch/nablarch-intellij-plugin.svg?branch=develop)](https://travis-ci.org/nablarch/nablarch-intellij-plugin)|
 
-## 機能
+## Function
 
-- Nablarchの非公開APIを使用している箇所を警告する(IntelliJ IDEAのインスペクション)
-- ブラックリストとして定義したJavaのAPIを使用している箇所を警告する(IntelliJ IDEAのインスペクション)
+- Alerts when private API of Nablarch is used (IntelliJ IDEA inspection)
+- Alerts when blacklisted Java API, is used (IntelliJ IDEA inspection)
 
-## インストール
+## Installation
 
-- リリースページからzipファイルをダウンロードし、IntelliJ IDEAにプラグインをインストールする
+- Download the zip file from the release page and install the plug-in for IntelliJ IDEA.
 
 ## TIPS
 
-### @Published(tag="architect")を許可したい
+### To allow @Published(tag="architect")
 
-Settings > Editor > Inspections > nablarch/use unpublished apiで「呼び出しを許可するタグのリスト」に architect を足す。
+Add architect to the “List of tags allowed to be called” in Settings > Editor > Inspections > nablarch/use unpublished api.
 
-### 併せて使いたい「Nablarchの開発を少しサポートするIntelliJ IDEA用のプラグイン」
+### “Plug-in meant for IntelliJ IDEA that provides a little support to Nablarch development” to be used in conjunction
 
 https://github.com/siosio/nablarch-helper
 
-### IntelliJ IDEAのインスペクションをCIでチェックしたい
+### Check IntelliJ idea inspection with CIs
 
-JenkinsでIntelliJ IDEAのinspectionを実行して結果をいい感じに表示させてみる
-http://siosio.hatenablog.com/entry/2016/12/23/212140
+Execute inspection of IntelliJ IDEA using Jenkins and see that the results are displayed correctly: http://siosio.hatenablog.com/entry/2016/12/23/212140
 
-### 使用不許可APIをカスタマイズしたい
+### Customize unauthorized API
 
-1. 下記のように、使用不許可APIをブラックリスト（BlackList.config）として作成してローカルで保存する。  
-※「.*」がある時はパッケージ指定、そうでない時はクラス指定と判定される。
+1. Create a blacklist (blackList.config) of unauthorized APIs and store them locally, as shown below.   
+※If ".*" is present, it is determined to be package settings and if ".*" is not present, it is determined to be class settings.
   ```
   java.security.interfaces.*
   java.security.spec.*
   java.lang.Error
   ```
-2. IntelliJで Settings > Editor > Inspections > nablarch/use blacklist java api で上記ブラックリストファイルを指定する。
+2. Specify the above black list file in Settings > Editor > Inspections > nablarch/use blacklist java api with IntelliJ.
