@@ -1,4 +1,4 @@
-# Nablarchの開発を支援するIntelliJ IDEA用プラグイン
+# Plug-ins for IntelliJ IDEA to Support Nablarch Development
 
 | master | develop |
 |:-----------|:------------|
