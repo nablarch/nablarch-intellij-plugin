@@ -1,4 +1,4 @@
-# Plug-ins for IntelliJ IDEA to Support Nablarch Development
+# Plugins for IntelliJ IDEA to Support Nablarch Development
 
 | master | develop |
 |:-----------|:------------|
@@ -11,15 +11,15 @@
 
 ## Installation
 
-- Download the zip file from the release page and install the plug-in for IntelliJ IDEA.
+- Download the zip file from the release page and install the plugin for IntelliJ IDEA.
 
 ## TIPS
 
 ### To allow @Published(tag="architect")
 
-Add architect to the “List of tags allowed to be called” in Settings > Editor > Inspections > nablarch/use unpublished api.
+Add architect to the "List of tags allowed to be called" in Settings > Editor > Inspections > nablarch/use unpublished api.
 
-### “Plug-in meant for IntelliJ IDEA that provides a little support to Nablarch development” to be used in conjunction
+### "Plugin meant for IntelliJ IDEA that provides a little support to Nablarch development" to be used in conjunction
 
 https://github.com/siosio/nablarch-helper
 
