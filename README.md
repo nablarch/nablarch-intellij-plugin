@@ -1,9 +1,5 @@
 # Nablarchの開発を支援するIntelliJ IDEA用プラグイン
 
-| master | develop |
-|:-----------|:------------|
-|[![Build Status](https://travis-ci.org/nablarch/nablarch-intellij-plugin.svg?branch=master)](https://travis-ci.org/nablarch/nablarch-intellij-plugin)|[![Build Status](https://travis-ci.org/nablarch/nablarch-intellij-plugin.svg?branch=develop)](https://travis-ci.org/nablarch/nablarch-intellij-plugin)|
-
 ## 機能
 
 - Nablarchの非公開APIを使用している箇所を警告する(IntelliJ IDEAのインスペクション)
